@@ -470,8 +470,8 @@ h4 {
 .import-inventory, 
 /* added pos-reports selector */
 .pos-reports {
-  max-width: 800px;
-  margin: 24px auto;
+  /* changed margin and removed max-width to 24px all around to fit better in current layout with sidebar */
+  margin: 24px;
   padding: 24px;
   background: #fff;
   border-radius: 12px;
@@ -623,4 +623,50 @@ td {
 .rejected-list,
 .error-list {
   margin-top: 12px;
+}
+
+/* app layout, sidebar and main content styles */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-sidebar {
+  width: 200px;
+  height: 100%;
+  background-color: white;
+  flex-direction: column;
+  padding: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.app-sidebar button {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  text-align: left;
+}
+
+.app-sidebar button.active {
+  background: #eff6ff;
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+.app-sidebar button:hover:not(.active) {
+  background: #f3f4f6;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }

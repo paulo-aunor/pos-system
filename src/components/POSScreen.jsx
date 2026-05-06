@@ -240,8 +240,6 @@ export default function POSScreen() {
     <div className="pos-screen">
       {/* ── Left side — menu browser ── */}
       <div className="pos-menu">
-        <h2>POS</h2>
-
         {/* Search box — primary way to find items */}
         <input
           type="text"

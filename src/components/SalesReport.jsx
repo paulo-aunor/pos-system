@@ -86,10 +86,30 @@ export default function SalesReport() {
   return (
     <div className="pos-reports">
       <div className="report-filters">
-        <button onClick={() => setFilter("today")}>Today</button>
-        <button onClick={() => setFilter("weekly")}>Weekly</button>
-        <button onClick={() => setFilter("monthly")}>Monthly</button>
-        <button onClick={() => setFilter("custom")}>Custom</button>
+        <button
+          className={filter === "today" ? "active" : ""}
+          onClick={() => setFilter("today")}
+        >
+          Today
+        </button>
+        <button
+          className={filter === "weekly" ? "active" : ""}
+          onClick={() => setFilter("weekly")}
+        >
+          Weekly
+        </button>
+        <button
+          className={filter === "monthly" ? "active" : ""}
+          onClick={() => setFilter("monthly")}
+        >
+          Monthly
+        </button>
+        <button
+          className={filter === "custom" ? "active" : ""}
+          onClick={() => setFilter("custom")}
+        >
+          Custom
+        </button>
         {filter === "custom" && (
           <div className="custom-filters">
             <input
@@ -105,22 +125,37 @@ export default function SalesReport() {
           </div>
         )}
       </div>
-      <p>{reportData.length} Sales</p>
-      <p>Total Revenue: ₱{totalRevenue.toFixed(2)}</p>
-      {Object.entries(paymentTotals).map(([method, total]) => (
-        <div key={method}>
-          <span>{method}</span>
-          <span>₱{total.toFixed(2)}</span>
+      <div className="report-stats">
+        <div className="stat-card">
+          <span className="stat-label">Sales</span>
+          <span className="stat-value">{reportData.length}</span>
         </div>
-      ))}
-      <p>Best Selling Items:</p>
-      {bestSellers.map(([itemName, { quantity, revenue }]) => (
-        <div key={itemName}>
-          <span>{itemName}</span>
-          <span>{quantity}</span>
-          <span>₱{revenue.toFixed(2)}</span>
+        <div className="stat-card">
+          <span className="stat-label">Revenue</span>
+          <span className="stat-value">₱{totalRevenue.toFixed(2)}</span>
         </div>
-      ))}
+      </div>
+
+      <div className="report-section">
+        <h4 className="report-section-title">Payment Breakdown</h4>
+        {Object.entries(paymentTotals).map(([method, total]) => (
+          <div className="report-row" key={method}>
+            <span>{method}</span>
+            <span>₱{total.toFixed(2)}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="report-section">
+        <h4 className="report-section-title">Best Selling Items</h4>
+        {bestSellers.map(([itemName, { quantity, revenue }]) => (
+          <div className="report-row" key={itemName}>
+            <span>{itemName}</span>
+            <span>x {quantity} sold</span>
+            <span>₱{revenue.toFixed(2)}</span>
+          </div>
+        ))}
+      </div>
 
       <div className="report-data">
         {reportData.map((transaction) => (

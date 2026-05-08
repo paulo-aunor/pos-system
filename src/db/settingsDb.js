@@ -5,7 +5,14 @@ export const DEFAULTS = {
   storeName: "My Restaurant",
   currencySymbol: "₱",
   taxRate: 0,
-  paymentMethods: ["cash", "card", "gcash", "staff", "owner"],
+  // paymentMethods: ["cash", "card", "gcash", "staff", "owner"],
+  paymentMethods: [
+    { id: "cash", label: "Cash" },
+    { id: "gcash", label: "Gcash" },
+    { id: "card", label: "Card" },
+    { id: "staff", label: "Staff Payment" },
+    { id: "owner", label: "Owner Payment" },
+  ],
   diningTypes: ["dine-in", "takeout", "delivery"],
 };
 

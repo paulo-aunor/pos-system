@@ -4,20 +4,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { getAllMenuItems, getCategories } from "../db/menuDb";
 import { saveTransaction } from "../db/transactionDb";
-
-//constants
-//payment methods available at checkout
-//add more as needed here to show in UI
-const PAYMENT_METHODS = [
-  { id: "cash", label: "Cash" },
-  { id: "gcash", label: "GCash" },
-  { id: "card", label: "Card" },
-  { id: "staff", label: "Staff Payment" },
-  { id: "owner", label: "Owner Payment" },
-];
-
-//change tax rate here if needed, currently set to 0 for simplicity
-const TAX_RATE = 0;
+import { getSetting } from "../db/settingsDb";
 
 //component
 export default function POSScreen() {
@@ -44,6 +31,10 @@ export default function POSScreen() {
   const [saleComplete, setSaleComplete] = useState(false);
   //error message
   const [error, setError] = useState(null);
+  //added states for taxRate, paymentMethods, and currencySymbol
+  const [taxRate, setTaxRate] = useState(0);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [currencySymbol, setCurrencySymbol] = useState("₱");
 
   //effects
   //load menu items and categories on component mount
@@ -56,8 +47,21 @@ export default function POSScreen() {
     setCategories(cats);
   };
 
+  //load settings function calls getSetting for each setting
+  const loadSettings = async () => {
+    const [rate, methods, symbol] = await Promise.all([
+      getSetting("taxRate"),
+      getSetting("paymentMethods"),
+      getSetting("currencySymbol"),
+    ]);
+    setTaxRate(rate);
+    setPaymentMethods(methods);
+    setCurrencySymbol(symbol);
+  };
+
   useEffect(() => {
     loadMenuData();
+    loadSettings();
   }, []);
 
   //derived state
@@ -93,7 +97,7 @@ export default function POSScreen() {
   const subtotal = cart.reduce((sum, item) => sum + item.itemTotal, 0);
 
   //tax amount — 0 until taxes are enabled
-  const taxAmount = subtotal * TAX_RATE;
+  const taxAmount = subtotal * taxRate;
 
   //discount amount — 0 until discounts are enabled
   const discountAmount = discount;
@@ -283,7 +287,8 @@ export default function POSScreen() {
             >
               <span className="item-name">{item.name}</span>
               <span className="item-price">
-                {/* toFixed(2) formats the number to 2 decimal places */}₱
+                {/* toFixed(2) formats the number to 2 decimal places */}
+                {currencySymbol}
                 {item.price.toFixed(2)}
               </span>
             </button>
@@ -318,7 +323,8 @@ export default function POSScreen() {
                   className="cart-qty-input"
                 />
                 <span className="cart-item-total">
-                  ₱{item.itemTotal.toFixed(2)}
+                  {currencySymbol}
+                  {item.itemTotal.toFixed(2)}
                 </span>
                 {/* × button removes the item from the cart */}
                 <button
@@ -337,14 +343,20 @@ export default function POSScreen() {
           <div className="cart-totals">
             <div className="cart-total-row">
               <span>Subtotal</span>
-              <span>₱{subtotal.toFixed(2)}</span>
+              <span>
+                {currencySymbol}
+                {subtotal.toFixed(2)}
+              </span>
             </div>
 
             {/* only show tax row when tax is enabled */}
-            {TAX_RATE > 0 && (
+            {taxRate > 0 && (
               <div className="cart-total-row">
-                <span>Tax ({(TAX_RATE * 100).toFixed(0)}%)</span>
-                <span>₱{taxAmount.toFixed(2)}</span>
+                <span>Tax ({(taxRate * 100).toFixed(0)}%)</span>
+                <span>
+                  {currencySymbol}
+                  {taxAmount.toFixed(2)}
+                </span>
               </div>
             )}
 
@@ -352,13 +364,19 @@ export default function POSScreen() {
             {discountAmount > 0 && (
               <div className="cart-total-row">
                 <span>Discount</span>
-                <span>-₱{discountAmount.toFixed(2)}</span>
+                <span>
+                  -{currencySymbol}
+                  {discountAmount.toFixed(2)}
+                </span>
               </div>
             )}
 
             <div className="cart-total-row total">
               <strong>Total</strong>
-              <strong>₱{total.toFixed(2)}</strong>
+              <strong>
+                {currencySymbol}
+                {total.toFixed(2)}
+              </strong>
             </div>
           </div>
         )}
@@ -377,7 +395,8 @@ export default function POSScreen() {
               disabled={cart.length === 0}
               className="charge-btn"
             >
-              Charge ₱{total.toFixed(2)}
+              Charge {currencySymbol}
+              {total.toFixed(2)}
             </button>
           </div>
         )}
@@ -390,7 +409,7 @@ export default function POSScreen() {
 
             {/* payment method selector */}
             <div className="payment-methods">
-              {PAYMENT_METHODS.map((method) => (
+              {paymentMethods.map((method) => (
                 <button
                   key={method.id}
                   className={paymentMethod === method.id ? "active" : ""}
@@ -419,7 +438,10 @@ export default function POSScreen() {
                 {/* show change due as soon as tendered >= total */}
                 {Number(amountTendered) >= total && (
                   <div className="change-due">
-                    <strong>Change Due: ₱{changeDue.toFixed(2)}</strong>
+                    <strong>
+                      Change Due: {currencySymbol}
+                      {changeDue.toFixed(2)}
+                    </strong>
                   </div>
                 )}
               </div>
@@ -442,22 +464,33 @@ export default function POSScreen() {
           <div className="sale-complete">
             <h3>✅ Sale Complete</h3>
             <p>
-              Total: <strong>₱{total.toFixed(2)}</strong>
+              Total:{" "}
+              <strong>
+                {symbol}
+                {total.toFixed(2)}
+              </strong>
             </p>
             <p>
               Payment:{" "}
               <strong>
-                {PAYMENT_METHODS.find((m) => m.id === paymentMethod)?.label}
+                {paymentMethods.find((m) => m.id === paymentMethod)?.label}
               </strong>
             </p>
             {paymentMethod === "cash" && (
               <>
                 <p>
                   Tendered:{" "}
-                  <strong>₱{Number(amountTendered).toFixed(2)}</strong>
+                  <strong>
+                    {symbol}
+                    {Number(amountTendered).toFixed(2)}
+                  </strong>
                 </p>
                 <p>
-                  Change: <strong>₱{changeDue.toFixed(2)}</strong>
+                  Change:{" "}
+                  <strong>
+                    {currencySymbol}
+                    {changeDue.toFixed(2)}
+                  </strong>
                 </p>
               </>
             )}

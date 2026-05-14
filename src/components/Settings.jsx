@@ -1,0 +1,156 @@
+//screen to capture and setup settings
+import { useState, useEffect } from "react";
+import { getSetting, setSettings } from "../db/settingsDb";
+
+export default function Settings({ storeName, setStoreName }) {
+  //states
+  const [diningTypes, setDiningTypes] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [newDiningType, setNewDiningType] = useState("");
+  const [newPaymentMethodId, setNewPaymentMethodId] = useState("");
+  const [newPaymentMethodLabel, setNewPaymentMethodLabel] = useState("");
+  const [currencySymbol, setCurrencySymbol] = useState("");
+  const [taxRate, setTaxRate] = useState("");
+  // const [storeName, setStoreName] = useState("");
+
+  //effects
+  //load settings function to get current settings
+  const loadSettings = async () => {
+    const [rate, methods, symbol, types, restoName] = await Promise.all([
+      getSetting("taxRate"),
+      getSetting("paymentMethods"),
+      getSetting("currencySymbol"),
+      getSetting("diningTypes"),
+      //getSetting("storeName"),
+    ]);
+    setTaxRate(rate);
+    setCurrencySymbol(symbol);
+    setDiningTypes(types);
+    setPaymentMethods(methods);
+    //setStoreName(restoName);
+  };
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  //handlers
+  //handles adding of dining types
+  const handleAddDiningType = () => {
+    //if diningType is blank, return nothing
+    if (!newDiningType.trim()) return;
+    setDiningTypes([...diningTypes, newDiningType.trim()]);
+    setNewDiningType("");
+  };
+
+  //handles adding of payment methods
+  const handleAddPaymentMethod = () => {
+    //if paymentMethodId or paymentMethodLabel are blank, return nothing
+    if (!newPaymentMethodId.trim() || !newPaymentMethodLabel.trim()) return;
+    setPaymentMethods([
+      ...paymentMethods,
+      { id: newPaymentMethodId.trim(), label: newPaymentMethodLabel.trim() },
+    ]);
+    setNewPaymentMethodId("");
+    setNewPaymentMethodLabel("");
+  };
+
+  //handles removal of dining type
+  const handleRemoveDiningType = (type) => {
+    setDiningTypes((prevDiningTypes) =>
+      prevDiningTypes.filter((c) => c !== type),
+    );
+  };
+
+  //handles removal of payment methods
+  const handleRemovePaymentMethod = (id) => {
+    setPaymentMethods((prevPaymentMethod) =>
+      prevPaymentMethod.filter((c) => c.id !== id),
+    );
+  };
+
+  //handles saving of settings
+  const handleSaveSettings = async () => {
+    await setSettings({
+      taxRate,
+      currencySymbol,
+      diningTypes,
+      paymentMethods,
+      //storeName,
+    });
+  };
+
+  //render
+  return (
+    <div className="settings">
+      <h2>Settings</h2>
+
+      {/* Store Name*/}
+      <div className="settings-section">
+        <h3>Store Name</h3>
+        <input
+          type="text"
+          value={storeName}
+          onChange={(e) => setStoreName(e.target.value)}
+          placeholder="Enter Store Name Here"
+        />
+      </div>
+
+      {/* Dining Types */}
+      <div className="settings-section">
+        <h3>Dining Types</h3>
+        {diningTypes.map((type) => (
+          <div key={type}>
+            <span>{type}</span>
+            <button
+              onClick={() => {
+                handleRemoveDiningType(type);
+              }}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        <input
+          type="text"
+          value={newDiningType}
+          onChange={(e) => setNewDiningType(e.target.value)}
+          placeholder="New dining type"
+        />
+        <button onClick={handleAddDiningType}>Add</button>
+      </div>
+
+      {/* Payment Methods */}
+      <div className="settings-section">
+        <h3>Payment Methods</h3>
+        {paymentMethods.map((method) => (
+          <div key={method.id}>
+            <span>{method.label}</span>
+            <button
+              onClick={() => {
+                handleRemovePaymentMethod(method.id);
+              }}
+            >
+              Remove
+            </button>
+          </div>
+        ))}
+        <input
+          type="text"
+          value={newPaymentMethodId}
+          onChange={(e) => setNewPaymentMethodId(e.target.value)}
+          placeholder="Payment method ID (e.g. gcash)"
+        />
+        <input
+          type="text"
+          value={newPaymentMethodLabel}
+          onChange={(e) => setNewPaymentMethodLabel(e.target.value)}
+          placeholder="Payment method label (e.g. GCash)"
+        />
+        <button onClick={handleAddPaymentMethod}>Add</button>
+      </div>
+
+      <button onClick={handleSaveSettings}>Save Settings</button>
+    </div>
+  );
+}

@@ -14,6 +14,8 @@ export const saveTransaction = async ({
   paymentMethod,
   amountTendered,
   change,
+  diningType,
+  customerName,
 }) => {
   const id = generateId();
 
@@ -27,6 +29,8 @@ export const saveTransaction = async ({
     paymentMethod, // 'cash' | 'gcash' | 'card' | 'staff' | 'owner'
     amountTendered, // what the customer gave (cash only, same as total for others)
     change, // change due (cash only, 0 for others)
+    diningType, //dining type (dinein, takeout, delivery)
+    customerName, //customer name optional
     timestamp: new Date(),
     synced: false,
   });

@@ -35,6 +35,10 @@ export default function POSScreen() {
   const [taxRate, setTaxRate] = useState(0);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [currencySymbol, setCurrencySymbol] = useState("₱");
+  //added states for dining type and customer
+  const [diningTypes, setDiningTypes] = useState([]);
+  const [diningType, setDiningType] = useState("dine-in");
+  const [customerName, setCustomerName] = useState("");
 
   //effects
   //load menu items and categories on component mount
@@ -49,14 +53,18 @@ export default function POSScreen() {
 
   //load settings function calls getSetting for each setting
   const loadSettings = async () => {
-    const [rate, methods, symbol] = await Promise.all([
+    const [rate, methods, symbol, types] = await Promise.all([
       getSetting("taxRate"),
       getSetting("paymentMethods"),
       getSetting("currencySymbol"),
+      getSetting("diningTypes"),
     ]);
     setTaxRate(rate);
     setPaymentMethods(methods);
     setCurrencySymbol(symbol);
+    setDiningTypes(types);
+    //for setting the default dining type
+    setDiningType(types[0]);
   };
 
   useEffect(() => {
@@ -218,6 +226,9 @@ export default function POSScreen() {
         amountTendered:
           paymentMethod === "cash" ? Number(amountTendered) : total,
         change: changeDue,
+        //added diningType and customer name
+        diningType,
+        customerName,
       });
 
       //show success state
@@ -237,6 +248,8 @@ export default function POSScreen() {
     setShowPayment(false);
     setSaleComplete(false);
     setError(null);
+    setDiningType(diningTypes[0]);
+    setCustomerName("");
   };
 
   //render
@@ -299,7 +312,27 @@ export default function POSScreen() {
       {/* ── Right side — cart ── */}
       <div className="pos-cart">
         <h3>Cart</h3>
+        {/* Dining type selector */}
+        <div className="dining-type-selector">
+          {diningTypes.map((type) => (
+            <button
+              key={type}
+              className={diningType === type ? "active" : ""}
+              onClick={() => setDiningType(type)}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
 
+        {/* Customer name — optional */}
+        <input
+          type="text"
+          placeholder="Customer name (optional)"
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          className="customer-name-input"
+        />
         {cart.length === 0 && (
           <p className="cart-empty">
             No items in cart. Search or browse to add items.
@@ -466,7 +499,7 @@ export default function POSScreen() {
             <p>
               Total:{" "}
               <strong>
-                {symbol}
+                {currencySymbol}
                 {total.toFixed(2)}
               </strong>
             </p>
@@ -481,7 +514,7 @@ export default function POSScreen() {
                 <p>
                   Tendered:{" "}
                   <strong>
-                    {symbol}
+                    {currencySymbol}
                     {Number(amountTendered).toFixed(2)}
                   </strong>
                 </p>

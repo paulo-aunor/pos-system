@@ -5,7 +5,6 @@ export const DEFAULTS = {
   storeName: "My Restaurant",
   currencySymbol: "₱",
   taxRate: 0,
-  // paymentMethods: ["cash", "card", "gcash", "staff", "owner"],
   paymentMethods: [
     { id: "cash", label: "Cash" },
     { id: "gcash", label: "Gcash" },

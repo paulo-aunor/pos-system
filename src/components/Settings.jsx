@@ -103,6 +103,7 @@ export default function Settings({ storeName, setStoreName }) {
           <div key={type}>
             <span>{type}</span>
             <button
+              className="remove-btn"
               onClick={() => {
                 handleRemoveDiningType(type);
               }}
@@ -117,7 +118,9 @@ export default function Settings({ storeName, setStoreName }) {
           onChange={(e) => setNewDiningType(e.target.value)}
           placeholder="New dining type"
         />
-        <button onClick={handleAddDiningType}>Add</button>
+        <button className="add-btn" onClick={handleAddDiningType}>
+          Add
+        </button>
       </div>
 
       {/* Payment Methods */}
@@ -127,6 +130,7 @@ export default function Settings({ storeName, setStoreName }) {
           <div key={method.id}>
             <span>{method.label}</span>
             <button
+              className="remove-btn"
               onClick={() => {
                 handleRemovePaymentMethod(method.id);
               }}
@@ -147,10 +151,14 @@ export default function Settings({ storeName, setStoreName }) {
           onChange={(e) => setNewPaymentMethodLabel(e.target.value)}
           placeholder="Payment method label (e.g. GCash)"
         />
-        <button onClick={handleAddPaymentMethod}>Add</button>
+        <button className="add-btn" onClick={handleAddPaymentMethod}>
+          Add
+        </button>
       </div>
 
-      <button onClick={handleSaveSettings}>Save Settings</button>
+      <button className="save-settings-btn" onClick={handleSaveSettings}>
+        Save Settings
+      </button>
     </div>
   );
 }

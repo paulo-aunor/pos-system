@@ -563,6 +563,40 @@ h4 {
   border-color: #4f46e5;
 }
 
+/* setting section styling */
+
+.settings-section {
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.settings-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 12px;
+}
+
+.settings input {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
 .customer-name-input {
   width: 100%;
   padding: 10px 14px;
@@ -609,7 +643,10 @@ h4 {
 
 .inventory-form button,
 .import-menu button,
-.import-inventory button {
+.import-inventory button,
+/* added add-btn and save-settings-btn in Settings.jsx */
+.add-btn,
+.save-settings-btn {
   padding: 9px 18px;
   background: #4f46e5;
   color: #fff;

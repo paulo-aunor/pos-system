@@ -1,16 +1,72 @@
-# React + Vite
+# TetherPOS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Offline-first POS system that can work without internet for retail and restaurants.
 
-Currently, two official plugins are available:
+Built by Paulo Aunor. Runs on Javascript.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- React
+- Dexie.js
+- Vite
+- Javascript
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Features
 
-## Expanding the ESLint configuration
+- POS System: Robust POS system with clear distinctions on categories
+- Offline Capability: Doesn't need internet to function.
+- Excel Import: Imports Menu Items and Inventory from Excel
+- Real-Time Sales Reports: Shows important Sales details to monitor restaurant activity. Helps you make more informed business decisions
+- Customization: Setup your POS based on your business needs
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+1. Clone the repo
+
+```bash
+git clone https://github.com/paulo-aunor/pos-system
+```
+
+2. Install dependencies
+
+```bash
+npm install
+```
+
+3. Run the Dev Server
+
+```bash
+npm run dev
+```
+
+## Architecture
+
+There is a database installed locally to every machine that syncs with a cloud database. When there is no internet, data is saved . It's designed to sync when connectivity is restored. Cloud sync via Supabase is planned.
+
+## Roadmap
+
+### Milestone 1 (current):
+
+- Tax rate configuration
+- Discounts per item and per bill
+- Dining type selector
+- Customer name field
+- Wastage entry
+- Simple variants
+
+### Milestone 2:
+
+- Staff/manager login with permissions
+- Cash reconciliation
+- Receipt printer integration
+- Full settings UI screen
+- Opening/closing procedures
+
+### Milestone 3:
+
+- Combo items with smart variant logic
+- Promotions engine (BOGO, etc.)
+- Split payments
+- Kitchen printer routing
+- Multi-device sync via Supabase
+- PWA (installable, works offline)

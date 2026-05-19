@@ -11,6 +11,8 @@ export default function Settings({ storeName, setStoreName }) {
   const [newPaymentMethodLabel, setNewPaymentMethodLabel] = useState("");
   const [currencySymbol, setCurrencySymbol] = useState("");
   const [taxRate, setTaxRate] = useState("");
+  const [discountType, setDiscountType] = useState("fixed");
+  const [discountAmount, setDiscountAmount] = useState(0);
   // const [storeName, setStoreName] = useState("");
 
   //effects

@@ -23,8 +23,6 @@ export default function POSScreen() {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   //amount the customer handed over (cash only)
   const [amountTendered, setAmountTendered] = useState("");
-  //discount amount — 0 for now
-  const [discount, setDiscount] = useState(0);
   //controls whether the payment panel is showing
   const [showPayment, setShowPayment] = useState(false);
   //success message after a completed sale
@@ -39,6 +37,9 @@ export default function POSScreen() {
   const [diningTypes, setDiningTypes] = useState([]);
   const [diningType, setDiningType] = useState("dine-in");
   const [customerName, setCustomerName] = useState("");
+  //added states for discount amount and type
+  const [discountType, setDiscountType] = useState("fixed");
+  const [discountValue, setDiscountValue] = useState(0);
 
   //effects
   //load menu items and categories on component mount
@@ -108,7 +109,10 @@ export default function POSScreen() {
   const taxAmount = subtotal * taxRate;
 
   //discount amount — 0 until discounts are enabled
-  const discountAmount = discount;
+  const discountAmount =
+    discountType === "percentage"
+      ? subtotal * (discountValue / 100)
+      : discountValue;
 
   //final total
   const total = subtotal + taxAmount - discountAmount;
@@ -220,7 +224,7 @@ export default function POSScreen() {
         items: cart,
         subtotal,
         taxAmount,
-        discountAmount,
+        discountValue: discountAmount,
         total,
         paymentMethod,
         amountTendered:
@@ -250,6 +254,8 @@ export default function POSScreen() {
     setError(null);
     setDiningType(diningTypes[0]);
     setCustomerName("");
+    setDiscountType("fixed");
+    setDiscountValue(0);
   };
 
   //render
@@ -396,7 +402,14 @@ export default function POSScreen() {
             {/* only show discount row when discount is applied */}
             {discountAmount > 0 && (
               <div className="cart-total-row">
-                <span>Discount</span>
+                {/* <span>Discount</span> */}
+                <span>
+                  Discount (
+                  {discountType === "percentage"
+                    ? `${discountValue}%`
+                    : "Fixed"}
+                  )
+                </span>
                 <span>
                   -{currencySymbol}
                   {discountAmount.toFixed(2)}
@@ -479,6 +492,32 @@ export default function POSScreen() {
                 )}
               </div>
             )}
+
+            {/* Discount */}
+            <div className="discount-section">
+              <label>Discount</label>
+              <div className="discount-type-toggle">
+                <button
+                  className={discountType === "fixed" ? "active" : ""}
+                  onClick={() => setDiscountType("fixed")}
+                >
+                  Fixed ({currencySymbol})
+                </button>
+                <button
+                  className={discountType === "percentage" ? "active" : ""}
+                  onClick={() => setDiscountType("percentage")}
+                >
+                  Percentage (%)
+                </button>
+              </div>
+              <input
+                type="number"
+                min="0"
+                placeholder={discountType === "fixed" ? "0.00" : "0"}
+                value={discountValue}
+                onChange={(e) => setDiscountValue(Number(e.target.value))}
+              />
+            </div>
 
             <div className="payment-actions">
               <button onClick={() => setShowPayment(false)}>Back</button>
